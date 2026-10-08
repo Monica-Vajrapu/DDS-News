@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, Clock, Share2, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Bookmark, Clock, Share2, Sparkles, ArrowRight, CheckCircle2, Eye, Heart, MessageSquare } from 'lucide-react';
 import { Article } from '../types/news';
 
 interface FeaturedLeadProps {
@@ -118,13 +118,24 @@ export const FeaturedLead: React.FC<FeaturedLeadProps> = ({
           </div>
 
           {/* Byline and CTA */}
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+          <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
             <div className="text-xs text-slate-600">
               <span className="font-semibold text-slate-900 block">{article.author}</span>
-              <span className="text-[11px] flex items-center gap-1.5 text-slate-600">
-                <Clock className="w-3 h-3 text-slate-600" />
-                {article.publishedAt} • {article.readTime}
-              </span>
+              <div className="flex items-center gap-3 mt-1 text-[11px] text-slate-500 font-medium">
+                <span className="flex items-center gap-1 text-slate-700 font-semibold">
+                  <Eye className="w-3.5 h-3.5 text-blue-600" />
+                  <span>{article.views.toLocaleString()}</span>
+                </span>
+                <span className="flex items-center gap-1 text-slate-700 font-semibold">
+                  <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
+                  <span>{article.likes.toLocaleString()}</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-slate-400" />
+                  {article.publishedAt}
+                </span>
+              </div>
             </div>
 
             <button

@@ -11,6 +11,7 @@ import { Footer } from './components/Footer';
 import { Article, User } from './types/news';
 import { DEFAULT_CATEGORIES, SAMPLE_ARTICLES } from './data/sampleArticles';
 import { Sparkles, Layers, Trash2 } from 'lucide-react';
+import { AUTHORIZED_ADMIN_EMAIL } from './components/AuthModal';
 
 const STORAGE_KEYS = {
   ARTICLES: 'dds_news_articles_v1',
@@ -104,10 +105,30 @@ export default function App() {
     localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(bookmarkedIds));
   }, [bookmarkedIds]);
 
+  // Strict Security Check: Admin Desk is strictly locked to ddsexpoai@gmail.com
+  const isAdmin = currentUser?.email?.toLowerCase().trim() === AUTHORIZED_ADMIN_EMAIL;
+
   // Auth Handlers
   const handleLogin = (user: User) => {
-    setCurrentUser(user);
-    showToast(`Welcome, ${user.name}! (${user.role === 'admin' ? 'Admin Access Granted' : 'Reader Access'})`);
+    const isAuthorized = user.email.toLowerCase().trim() === AUTHORIZED_ADMIN_EMAIL;
+    const verifiedUser: User = {
+      ...user,
+      role: isAuthorized ? 'admin' : 'user',
+    };
+    setCurrentUser(verifiedUser);
+    if (isAuthorized) {
+      showToast(`Welcome Admin! Admin Desk unlocked for ${user.email}.`);
+    } else {
+      showToast(`Welcome, ${user.name}! (Signed in as Reader)`);
+    }
+  };
+
+  const handleOpenAdminDesk = () => {
+    if (currentUser?.email?.toLowerCase().trim() === AUTHORIZED_ADMIN_EMAIL) {
+      setAdminPanelOpen(true);
+    } else {
+      showToast(`Access Denied: Admin Desk is strictly reserved for ${AUTHORIZED_ADMIN_EMAIL}.`);
+    }
   };
 
   const handleLogout = () => {
@@ -233,6 +254,15 @@ export default function App() {
     }
   };
 
+  // Increment real view count when article is opened
+  const handleSelectArticle = (art: Article) => {
+    const updatedViews = (art.views || 0) + 1;
+    setArticles((prev) =>
+      prev.map((a) => (a.id === art.id ? { ...a, views: updatedViews } : a))
+    );
+    setSelectedArticle({ ...art, views: updatedViews });
+  };
+
   // Filter Articles
   const filteredArticles = articles.filter((art) => {
     const matchesCategory = activeCategory === 'All' || art.category === activeCategory;
@@ -278,7 +308,7 @@ export default function App() {
         currentUser={currentUser}
         onOpenAuth={handleOpenAuth}
         onLogout={handleLogout}
-        onOpenAdminDesk={() => setAdminPanelOpen(true)}
+        onOpenAdminDesk={handleOpenAdminDesk}
         onOpenBookmarks={() => setBookmarksModalOpen(true)}
         bookmarkCount={bookmarkedIds.length}
       />
@@ -290,7 +320,7 @@ export default function App() {
         {articles.length === 0 ? (
           <EmptyState
             currentUser={currentUser}
-            onOpenAdminDesk={() => setAdminPanelOpen(true)}
+            onOpenAdminDesk={handleOpenAdminDesk}
             onOpenAuth={() => handleOpenAuth('login')}
             onLoadSamples={handleLoadSamples}
           />
@@ -344,7 +374,7 @@ export default function App() {
                 {leadArticle && (
                   <FeaturedLead
                     article={leadArticle}
-                    onSelect={setSelectedArticle}
+                    onSelect={handleSelectArticle}
                     isBookmarked={bookmarkedIds.includes(leadArticle.id)}
                     onToggleBookmark={handleToggleBookmark}
                     onShare={handleShareArticle}
@@ -365,7 +395,7 @@ export default function App() {
                         <ArticleCard
                           key={article.id}
                           article={article}
-                          onSelect={setSelectedArticle}
+                          onSelect={handleSelectArticle}
                           isBookmarked={bookmarkedIds.includes(article.id)}
                           onToggleBookmark={handleToggleBookmark}
                           onShare={handleShareArticle}
@@ -385,8 +415,8 @@ export default function App() {
         categories={categories}
         onSelectCategory={setActiveCategory}
         onOpenAuth={() => handleOpenAuth('login')}
-        isAdmin={currentUser?.role === 'admin'}
-        onOpenAdminDesk={() => setAdminPanelOpen(true)}
+        isAdmin={isAdmin}
+        onOpenAdminDesk={handleOpenAdminDesk}
       />
 
       {/* Modals */}
@@ -398,11 +428,12 @@ export default function App() {
         onLikeArticle={handleLikeArticle}
         onAddComment={handleAddComment}
         currentUser={currentUser}
+        onOpenAuth={() => handleOpenAuth('login')}
       />
 
-      {/* Admin Panel: Only opened by Admin */}
+      {/* Admin Panel: Only opened if user is verified as ddsexpoai@gmail.com */}
       <AdminPanel
-        isOpen={adminPanelOpen}
+        isOpen={adminPanelOpen && isAdmin}
         onClose={() => setAdminPanelOpen(false)}
         articles={articles}
         categories={categories}
@@ -427,7 +458,7 @@ export default function App() {
         isOpen={bookmarksModalOpen}
         onClose={() => setBookmarksModalOpen(false)}
         bookmarkedArticles={bookmarkedArticlesList}
-        onSelectArticle={setSelectedArticle}
+        onSelectArticle={handleSelectArticle}
         onRemoveBookmark={handleToggleBookmark}
       />
     </div>

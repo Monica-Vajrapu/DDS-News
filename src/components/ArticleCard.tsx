@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark, Clock, Share2, Sparkles, User as UserIcon } from 'lucide-react';
+import { Bookmark, Clock, Share2, Sparkles, User as UserIcon, Eye, Heart, MessageSquare } from 'lucide-react';
 import { Article } from '../types/news';
 
 interface ArticleCardProps {
@@ -68,16 +68,22 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         </div>
 
         {/* Metadata Footer */}
-        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-slate-700 truncate max-w-[120px]">
-              {article.author}
+        <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 font-semibold text-slate-700">
+              <Eye className="w-3.5 h-3.5 text-blue-600" />
+              <span>{article.views.toLocaleString()}</span>
             </span>
-            <span>•</span>
-            <span className="flex items-center gap-1 text-[11px]">
-              <Clock className="w-3 h-3 text-slate-600" />
-              {article.readTime}
+            <span className="flex items-center gap-1 font-semibold text-slate-700">
+              <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
+              <span>{article.likes.toLocaleString()}</span>
             </span>
+            {article.comments && article.comments.length > 0 && (
+              <span className="flex items-center gap-1 font-medium text-slate-500">
+                <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+                <span>{article.comments.length}</span>
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1">

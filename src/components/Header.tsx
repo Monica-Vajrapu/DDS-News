@@ -41,6 +41,9 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
+  // STRICT SECURITY CHECK: Only ddsexpoai@gmail.com can be admin
+  const isAdmin = currentUser?.email?.toLowerCase().trim() === 'ddsexpoai@gmail.com';
+
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200/80 shadow-xs backdrop-blur-md">
       {/* Top Banner / Utility Bar */}
@@ -108,8 +111,8 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </button>
 
-            {/* Admin Desk Button: ONLY VISIBLE IF CURRENT USER IS ADMIN */}
-            {currentUser?.role === 'admin' && (
+            {/* Admin Desk Button: STRICTLY VISIBLE ONLY TO ddsexpoai@gmail.com */}
+            {isAdmin && (
               <button
                 onClick={onOpenAdminDesk}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-lg shadow-sm shadow-blue-500/20 transition cursor-pointer"
@@ -125,7 +128,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
                 <div className="flex items-center gap-2">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                    currentUser.role === 'admin' 
+                    isAdmin 
                       ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-500/30' 
                       : 'bg-slate-100 text-slate-700'
                   }`}>
@@ -136,7 +139,7 @@ export const Header: React.FC<HeaderProps> = ({
                       {currentUser.name}
                     </p>
                     <p className="text-[10px] text-slate-600 flex items-center gap-1 font-medium">
-                      {currentUser.role === 'admin' ? (
+                      {isAdmin ? (
                         <span className="text-blue-600 font-semibold flex items-center gap-0.5">
                           <ShieldCheck className="w-3 h-3 inline" /> Admin
                         </span>

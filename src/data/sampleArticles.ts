@@ -67,13 +67,19 @@ Engineering demonstrations also showcased sub-100ms reasoning benchmarks, hybrid
     ],
     isBreaking: true,
     isFeatured: true,
-    views: 1420,
-    likes: 86,
+    views: 1840,
+    likes: 124,
     comments: [
       {
         id: 'c1',
         author: 'Alex Chen',
-        text: 'The sub-100ms latency demonstration was mind-blowing. Great breakdown!',
+        text: 'The sub-100ms latency demonstration on stage was mind-blowing. Truly enterprise-grade.',
+        date: '25m ago'
+      },
+      {
+        id: 'c2',
+        author: 'Priya Sharma',
+        text: 'Autonomous self-healing pipelines are going to save DevOps teams hundreds of on-call hours.',
         date: '10m ago'
       }
     ]
@@ -97,9 +103,16 @@ By integrating multi-modal context—including architectural diagrams, database 
     ],
     isBreaking: false,
     isFeatured: false,
-    views: 890,
-    likes: 42,
-    comments: []
+    views: 940,
+    likes: 67,
+    comments: [
+      {
+        id: 'c3',
+        author: 'Devon Lee',
+        text: 'We integrated visual reasoning into our PR reviews last month and regression bugs dropped significantly.',
+        date: '1h ago'
+      }
+    ]
   },
   {
     id: 'cloud-gpu-clusters-3',
