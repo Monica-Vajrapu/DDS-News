@@ -1,0 +1,6 @@
+{
+  "name": "DDS News",
+  "description": "A clean, modern technology and AI news publishing portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
